@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import { applyBoxUV } from "./uv.js";
 
+
 let boxMesh = null;
+
 
 
 export function createBox(
@@ -10,37 +12,56 @@ export function createBox(
     height,
     depth,
     texture = null
-) {
+){
 
+    // =========================
+    // 既存BOX削除
+    // =========================
 
-    if (boxMesh) {
+    if(boxMesh){
 
         scene.remove(boxMesh);
 
+
         boxMesh.geometry.dispose();
 
-        if (Array.isArray(boxMesh.material)) {
 
-            boxMesh.material.forEach(m => m.dispose());
+        if(Array.isArray(boxMesh.material)){
 
-        } else {
+            boxMesh.material.forEach(
+                m=>m.dispose()
+            );
+
+        }else{
 
             boxMesh.material.dispose();
 
         }
+
 
         boxMesh = null;
 
     }
 
 
+
+
+
     const w = Number(width);
+
     const h = Number(height);
+
     const d = Number(depth);
 
 
 
-    const geometry =
+
+
+    // =========================
+    // BOX生成
+    // =========================
+
+    let geometry =
         new THREE.BoxGeometry(
             w,
             h,
@@ -48,6 +69,24 @@ export function createBox(
         );
 
 
+
+    /*
+    
+    Indexed Geometryでは
+    UV指定がズレるため解除
+    
+    */
+
+    geometry =
+        geometry.toNonIndexed();
+
+
+
+
+
+    // =========================
+    // 展開図UV適用
+    // =========================
 
     applyBoxUV(
         geometry,
@@ -57,6 +96,12 @@ export function createBox(
     );
 
 
+
+
+
+    // =========================
+    // Material
+    // =========================
 
     const material =
         new THREE.MeshStandardMaterial({
@@ -73,6 +118,13 @@ export function createBox(
 
 
 
+
+
+
+    // =========================
+    // Mesh
+    // =========================
+
     boxMesh =
         new THREE.Mesh(
             geometry,
@@ -83,6 +135,7 @@ export function createBox(
 
     boxMesh.position.y =
         h / 2;
+
 
 
 
@@ -98,7 +151,11 @@ export function createBox(
 
     return boxMesh;
 
+
 }
+
+
+
 
 
 
