@@ -113,7 +113,11 @@ window.addEventListener(
                 area
             );
 
-
+            console.log(
+                "UV変更",
+                face,
+                area
+            );
 
             console.log(
                 "UV updated",
