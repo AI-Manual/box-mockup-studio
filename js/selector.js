@@ -6,9 +6,15 @@ let image = null;
 
 let dragging = false;
 
+let moving = false;
+
 
 let startX = 0;
 let startY = 0;
+
+
+let moveOffsetX = 0;
+let moveOffsetY = 0;
 
 
 let currentRect = null;
@@ -22,14 +28,20 @@ let callback = null;
 let currentFace = "front";
 
 
+
 // 面ごとの座標保存
 const faceRects = {
 
     front:null,
+
     back:null,
+
     left:null,
+
     right:null,
+
     top:null,
+
     bottom:null
 
 };
@@ -37,17 +49,26 @@ const faceRects = {
 
 
 
+
+// =====================================
+// 初期化
+// =====================================
+
 export function initSelector(
     canvasId,
     onSelected
 ){
 
+
     canvas =
-        document.getElementById(canvasId);
+        document.getElementById(
+            canvasId
+        );
 
 
     ctx =
         canvas.getContext("2d");
+
 
 
     callback =
@@ -72,25 +93,46 @@ export function initSelector(
         mouseUp
     );
 
+
+    canvas.addEventListener(
+        "mouseleave",
+        mouseUp
+    );
+
 }
 
 
 
 
-// 選択する面変更
+
+// =====================================
+// 面変更
+// =====================================
+
 export function selectFace(face){
 
+
     currentFace = face;
+
 
     currentRect =
         faceRects[face];
 
+
     draw();
+
 
 }
 
 
 
+
+
+
+
+// =====================================
+// 画像セット
+// =====================================
 
 export function setImage(img){
 
@@ -109,80 +151,235 @@ export function setImage(img){
 
     draw();
 
+
 }
 
 
 
 
-function mouseDown(e){
 
 
-    const r =
+
+// =====================================
+// マウス座標変換
+// =====================================
+
+function getMousePosition(e){
+
+
+    const rect =
         canvas.getBoundingClientRect();
 
 
 
-    startX =
-        e.clientX-r.left;
+    const scaleX =
+        canvas.width /
+        rect.width;
 
 
-    startY =
-        e.clientY-r.top;
+    const scaleY =
+        canvas.height /
+        rect.height;
 
 
 
-    dragging=true;
+    return {
+
+        x:
+        (e.clientX - rect.left)
+        * scaleX,
+
+
+        y:
+        (e.clientY - rect.top)
+        * scaleY
+
+    };
 
 }
 
 
 
 
+
+
+
+// =====================================
+// 開始
+// =====================================
+
+function mouseDown(e){
+
+
+    const pos =
+        getMousePosition(e);
+
+
+
+    const rect =
+        faceRects[currentFace];
+
+
+
+    // 既存範囲を掴んだ場合
+    if(
+        rect &&
+        pos.x >= rect.x &&
+        pos.x <= rect.x + rect.width &&
+        pos.y >= rect.y &&
+        pos.y <= rect.y + rect.height
+    ){
+
+
+        moving = true;
+
+
+
+        moveOffsetX =
+            pos.x - rect.x;
+
+
+        moveOffsetY =
+            pos.y - rect.y;
+
+
+
+        currentRect = rect;
+
+
+        return;
+
+    }
+
+
+
+
+
+    // 新規選択
+
+    startX =
+        pos.x;
+
+
+    startY =
+        pos.y;
+
+
+    dragging = true;
+
+
+
+    currentRect = {
+
+        x:startX,
+
+        y:startY,
+
+        width:0,
+
+        height:0
+
+    };
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// 移動・選択
+// =====================================
+
 function mouseMove(e){
 
+
+    const pos =
+        getMousePosition(e);
+
+
+
+
+    // 移動中
+
+    if(moving){
+
+
+        currentRect = {
+
+
+            x:
+            pos.x - moveOffsetX,
+
+
+            y:
+            pos.y - moveOffsetY,
+
+
+            width:
+            faceRects[currentFace].width,
+
+
+            height:
+            faceRects[currentFace].height
+
+
+        };
+
+
+
+        faceRects[currentFace] =
+            currentRect;
+
+
+
+        draw();
+
+
+        return;
+
+    }
+
+
+
+
+
+    // 新規選択中
 
     if(!dragging)
         return;
 
 
 
-    const r =
-        canvas.getBoundingClientRect();
+    currentRect = {
 
 
-
-    const x =
-        e.clientX-r.left;
-
-
-    const y =
-        e.clientY-r.top;
-
-
-
-
-    currentRect={
-
-
-        x:Math.min(
+        x:
+        Math.min(
             startX,
-            x
+            pos.x
         ),
 
 
-        y:Math.min(
+        y:
+        Math.min(
             startY,
-            y
+            pos.y
         ),
 
 
-        width:Math.abs(
-            x-startX
+        width:
+        Math.abs(
+            pos.x - startX
         ),
 
 
-        height:Math.abs(
-            y-startY
+        height:
+        Math.abs(
+            pos.y - startY
         )
 
 
@@ -192,16 +389,33 @@ function mouseMove(e){
 
     draw();
 
+
 }
 
 
 
 
 
+
+
+// =====================================
+// 終了
+// =====================================
+
 function mouseUp(){
 
 
-    dragging=false;
+    if(
+        !dragging &&
+        !moving
+    )
+        return;
+
+
+
+    dragging = false;
+
+    moving = false;
 
 
 
@@ -212,12 +426,16 @@ function mouseUp(){
             currentRect;
 
 
+
         if(callback){
 
 
             callback(
+
                 currentFace,
+
                 currentRect
+
             );
 
 
@@ -233,6 +451,12 @@ function mouseUp(){
 
 
 
+
+
+// =====================================
+// 描画
+// =====================================
+
 function draw(){
 
 
@@ -242,19 +466,29 @@ function draw(){
 
 
     ctx.clearRect(
+
         0,
+
         0,
+
         canvas.width,
+
         canvas.height
+
     );
 
 
 
     ctx.drawImage(
+
         image,
+
         0,
+
         0
+
     );
+
 
 
 
@@ -266,27 +500,31 @@ function draw(){
             faceRects[face];
 
 
+
         if(!rect)
             return;
 
 
 
         ctx.strokeStyle =
-            face===currentFace
+            face === currentFace
             ? "red"
             : "blue";
 
 
 
-        ctx.lineWidth=2;
+        ctx.lineWidth = 2;
 
 
 
         ctx.strokeRect(
 
             rect.x,
+
             rect.y,
+
             rect.width,
+
             rect.height
 
         );
@@ -296,17 +534,27 @@ function draw(){
 
 
 
+
+
     if(currentRect){
 
 
-        ctx.strokeStyle="red";
+        ctx.strokeStyle =
+            "red";
+
+
+        ctx.lineWidth = 2;
+
 
 
         ctx.strokeRect(
 
             currentRect.x,
+
             currentRect.y,
+
             currentRect.width,
+
             currentRect.height
 
         );
@@ -321,12 +569,17 @@ function draw(){
 
 
 
+
+
+// =====================================
+// 取得
+// =====================================
+
 export function getRect(){
 
     return currentRect;
 
 }
-
 
 
 
