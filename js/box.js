@@ -1,24 +1,81 @@
 import * as THREE from "three";
-import { applyBoxUV } from "./uv.js";
 
 
 let boxMesh = null;
 
 
 
+// 面Texture保存
+
+const faceTextures = {
+
+
+    right:null,
+    left:null,
+    top:null,
+    bottom:null,
+    front:null,
+    back:null
+
+};
+
+
+
+
+
+
+// =======================================
+// 面Texture設定
+// =======================================
+
+export function setFaceTexture(
+    face,
+    texture
+){
+
+    if(!faceTextures[face])
+    {
+
+        faceTextures[face] =
+            texture;
+
+    }
+    else
+    {
+
+        faceTextures[face] =
+            texture;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+// =======================================
+// BOX生成
+// =======================================
+
 export function createBox(
     scene,
     width,
     height,
-    depth,
-    texture = null
+    depth
 ){
 
-    // 既存BOX削除
+
 
     if(boxMesh){
 
-        scene.remove(boxMesh);
+
+        scene.remove(
+            boxMesh
+        );
 
 
         boxMesh.geometry.dispose();
@@ -30,14 +87,8 @@ export function createBox(
                 m=>m.dispose()
             );
 
-        }else{
-
-            boxMesh.material.dispose();
-
         }
 
-
-        boxMesh = null;
 
     }
 
@@ -45,54 +96,58 @@ export function createBox(
 
 
 
-    const w = Number(width);
-    const h = Number(height);
-    const d = Number(depth);
 
-
-
-
-
-    let geometry =
+    const geometry =
         new THREE.BoxGeometry(
-            w,
-            h,
-            d
+
+            Number(width),
+            Number(height),
+            Number(depth)
+
         );
 
 
 
-    // UV制御用に非Indexed化
-
-    geometry =
-        geometry.toNonIndexed();
 
 
 
 
-
-    // 展開図UV適用
-
-    applyBoxUV(
-        geometry
-    );
+    const materials = [
 
 
+        createMaterial(
+            faceTextures.right
+        ),
 
 
+        createMaterial(
+            faceTextures.left
+        ),
 
-    const material =
-        new THREE.MeshStandardMaterial({
 
-            map:texture,
+        createMaterial(
+            faceTextures.top
+        ),
 
-            color:0xffffff,
 
-            roughness:0.95,
+        createMaterial(
+            faceTextures.bottom
+        ),
 
-            metalness:0
 
-        });
+        createMaterial(
+            faceTextures.front
+        ),
+
+
+        createMaterial(
+            faceTextures.back
+        )
+
+
+    ];
+
+
 
 
 
@@ -100,28 +155,67 @@ export function createBox(
 
     boxMesh =
         new THREE.Mesh(
+
             geometry,
-            material
+
+            materials
+
         );
 
 
 
+
+
     boxMesh.position.y =
-        h / 2;
+        Number(height)/2;
 
 
 
-    boxMesh.castShadow = true;
-
-    boxMesh.receiveShadow = true;
 
 
+    boxMesh.castShadow =
+        true;
 
-    scene.add(boxMesh);
+
+    boxMesh.receiveShadow =
+        true;
+
+
+
+
+
+    scene.add(
+        boxMesh
+    );
 
 
 
     return boxMesh;
+
+
+}
+
+
+
+
+
+
+
+function createMaterial(texture){
+
+
+    return new THREE.MeshStandardMaterial({
+
+        map:texture,
+
+        color:0xffffff,
+
+        roughness:0.95,
+
+        metalness:0
+
+    });
+
 
 }
 
