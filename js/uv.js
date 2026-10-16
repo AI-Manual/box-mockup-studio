@@ -1,130 +1,217 @@
 import * as THREE from "three";
-import { getBox } from "./box.js";
 
-const textures = {
-    front: null,
-    back: null,
-    left: null,
-    right: null,
-    top: null,
-    bottom: null
+
+// 展開図配置
+//
+// 画像全体をUV 0〜1で管理
+//
+//        TOP
+//
+// LEFT FRONT RIGHT BACK
+//
+//       BOTTOM
+//
+
+const faceAreas = {
+
+
+    front:{
+
+        u1:0.25,
+        v1:0.33,
+
+        u2:0.50,
+        v2:0.66
+
+    },
+
+
+    back:{
+
+        u1:0.75,
+        v1:0.33,
+
+        u2:1.00,
+        v2:0.66
+
+    },
+
+
+    left:{
+
+        u1:0.00,
+        v1:0.33,
+
+        u2:0.25,
+        v2:0.66
+
+    },
+
+
+    right:{
+
+        u1:0.50,
+        v1:0.33,
+
+        u2:0.75,
+        v2:0.66
+
+    },
+
+
+    top:{
+
+        u1:0.25,
+        v1:0.00,
+
+        u2:0.50,
+        v2:0.33
+
+    },
+
+
+    bottom:{
+
+        u1:0.25,
+        v1:0.66,
+
+        u2:0.50,
+        v2:1.00
+
+    }
+
+
 };
 
-export function setFaceTexture(face, texture) {
 
-    if (!textures.hasOwnProperty(face)) {
-        console.warn("Unknown face:", face);
-        return;
-    }
 
-    textures[face] = texture;
 
-    updateBoxTexture();
 
-}
+export function applyBoxUV(
+    geometry,
+    width,
+    height,
+    depth
+){
 
-export function getFaceTexture(face) {
 
-    return textures[face];
+    const uv = geometry.attributes.uv;
 
-}
 
-export function clearTextures() {
+    /*
+    
+    BoxGeometryの面順
 
-    Object.keys(textures).forEach(key => {
+    0 right
+    1 left
+    2 top
+    3 bottom
+    4 front
+    5 back
 
-        textures[key] = null;
+    */
 
-    });
 
-    updateBoxTexture();
+    const mappings=[
 
-}
 
-function createMaterial(texture, face) {
+        faceAreas.right,
 
-    if (texture) {
+        faceAreas.left,
 
-        texture.center.set(0.5, 0.5);
+        faceAreas.top,
 
-        texture.flipY = false;
+        faceAreas.bottom,
 
-        switch (face) {
+        faceAreas.front,
 
-            case "front":
-                texture.rotation = 0;
-                break;
+        faceAreas.back
 
-            case "back":
-                texture.rotation = Math.PI;
-                break;
+    ];
 
-            case "left":
-                texture.rotation = Math.PI / 2;
-                break;
 
-            case "right":
-                texture.rotation = -Math.PI / 2;
-                break;
 
-            case "top":
-                texture.rotation = 0;
-                break;
+    let offset = 0;
 
-            case "bottom":
-                texture.rotation = Math.PI;
-                break;
 
+
+    for(
+        let i = 0;
+        i < mappings.length;
+        i++
+    ){
+
+
+        const area = mappings[i];
+
+
+        const a = offset;
+
+        const b = offset + 1;
+
+        const c = offset + 2;
+
+        const d = offset + 3;
+
+
+
+        if(
+            c >= uv.count
+        ){
+            break;
         }
 
-        texture.needsUpdate = true;
 
-        return new THREE.MeshStandardMaterial({
 
-            map: texture,
-            roughness: 0.95,
-            metalness: 0
+        // 三角形1
+        uv.setXY(
+            a,
+            area.u1,
+            area.v1
+        );
 
-        });
+        uv.setXY(
+            b,
+            area.u2,
+            area.v1
+        );
+
+        uv.setXY(
+            c,
+            area.u2,
+            area.v2
+        );
+
+
+        // 三角形2
+
+        uv.setXY(
+            a + 3,
+            area.u1,
+            area.v1
+        );
+
+        uv.setXY(
+            c,
+            area.u2,
+            area.v2
+        );
+
+        uv.setXY(
+            d,
+            area.u1,
+            area.v2
+        );
+
+
+
+        offset += 4;
+
 
     }
 
-    return new THREE.MeshStandardMaterial({
 
-        color: 0xffffff,
-        roughness: 0.95,
-        metalness: 0
+    uv.needsUpdate = true;
 
-    });
-
-}
-function updateBoxTexture() {
-
-    const box = getBox();
-
-    if (!box) return;
-
-    // 以前のマテリアルを破棄
-    if (Array.isArray(box.material)) {
-
-        box.material.forEach(m => m.dispose());
-
-    } else if (box.material) {
-
-        box.material.dispose();
-
-    }
-
-    // Three.js BoxGeometry の面順
-    box.material = [
-
-    createMaterial(textures.right, "right"),
-    createMaterial(textures.left, "left"),
-    createMaterial(textures.top, "top"),
-    createMaterial(textures.bottom, "bottom"),
-    createMaterial(textures.front, "front"),
-    createMaterial(textures.back, "back")
-
-];
 
 }
