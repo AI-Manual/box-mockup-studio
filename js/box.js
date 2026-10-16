@@ -14,9 +14,7 @@ export function createBox(
     texture = null
 ){
 
-    // =========================
     // 既存BOX削除
-    // =========================
 
     if(boxMesh){
 
@@ -48,18 +46,12 @@ export function createBox(
 
 
     const w = Number(width);
-
     const h = Number(height);
-
     const d = Number(depth);
 
 
 
 
-
-    // =========================
-    // BOX生成
-    // =========================
 
     let geometry =
         new THREE.BoxGeometry(
@@ -70,12 +62,7 @@ export function createBox(
 
 
 
-    /*
-    
-    Indexed Geometryでは
-    UV指定がズレるため解除
-    
-    */
+    // UV制御用に非Indexed化
 
     geometry =
         geometry.toNonIndexed();
@@ -84,24 +71,15 @@ export function createBox(
 
 
 
-    // =========================
     // 展開図UV適用
-    // =========================
 
     applyBoxUV(
-        geometry,
-        w,
-        h,
-        d
+        geometry
     );
 
 
 
 
-
-    // =========================
-    // Material
-    // =========================
 
     const material =
         new THREE.MeshStandardMaterial({
@@ -120,11 +98,6 @@ export function createBox(
 
 
 
-
-    // =========================
-    // Mesh
-    // =========================
-
     boxMesh =
         new THREE.Mesh(
             geometry,
@@ -135,7 +108,6 @@ export function createBox(
 
     boxMesh.position.y =
         h / 2;
-
 
 
 
@@ -150,7 +122,6 @@ export function createBox(
 
 
     return boxMesh;
-
 
 }
 
