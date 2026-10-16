@@ -213,3 +213,20 @@ function animate(){
 
 }
 
+import { createBox } from "./box.js";
+
+export function updateBoxSize(w,h,d){
+
+    createBox(
+
+        scene,
+
+        w,
+
+        h,
+
+        d
+
+    );
+
+}
