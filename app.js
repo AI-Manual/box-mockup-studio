@@ -1,15 +1,12 @@
-import * as THREE from "three";
-
-
 import {
     initScene,
-    updateBoxSize,
-    setBoxTexture
+    updateBoxSize
 } from "./js/scene.js";
 
 
 import {
-    loadTexture
+    loadTexture,
+    cropTexture
 } from "./js/texture.js";
 
 
@@ -21,8 +18,8 @@ import {
 
 
 import {
-    setFaceUV
-} from "./js/uv.js";
+    setFaceTexture
+} from "./js/box.js";
 
 
 
@@ -30,9 +27,11 @@ let sourceImage = null;
 
 
 
+
 window.addEventListener(
 "DOMContentLoaded",
 ()=>{
+
 
 
     // =====================
@@ -44,8 +43,10 @@ window.addEventListener(
 
 
 
+
+
     // =====================
-    // 展開図選択初期化
+    // 展開図選択
     // =====================
 
     initSelector(
@@ -54,6 +55,7 @@ window.addEventListener(
 
 
         (face, rect)=>{
+
 
 
             console.log(
@@ -69,88 +71,53 @@ window.addEventListener(
 
 
 
-            /*
-            
-            Canvas座標
-            ↓
-            UV座標へ変換
-            
-            Three.js UV
-            0〜1
-            
-            */
 
 
-            const area = {
-
-
-                u1:
-                    rect.x /
-                    sourceImage.width,
-
-
-                v1:
-                    rect.y /
-                    sourceImage.height,
-
-
-                u2:
-                    (rect.x + rect.width) /
-                    sourceImage.width,
-
-
-                v2:
-                    (rect.y + rect.height) /
-                    sourceImage.height
-
-
-            };
+            const texture =
+                cropTexture(
+                    rect
+                );
 
 
 
-            setFaceUV(
+
+            setFaceTexture(
+
                 face,
-                area
-            );
 
-            console.log(
-                "UV変更",
-                face,
-                area
-            );
+                texture
 
-            console.log(
-                "UV updated",
-                face,
-                area
             );
 
 
 
-            // サイズ再取得して反映
+
+
+            // BOX更新
 
             const w =
                 Number(
-                document
-                .getElementById("width")
-                .value
+                    document
+                    .getElementById("width")
+                    .value
                 );
 
 
             const h =
                 Number(
-                document
-                .getElementById("height")
-                .value
+                    document
+                    .getElementById("height")
+                    .value
                 );
 
 
             const d =
                 Number(
-                document
-                .getElementById("depth")
-                .value
+                    document
+                    .getElementById("depth")
+                    .value
                 );
+
 
 
             updateBoxSize(
@@ -158,6 +125,7 @@ window.addEventListener(
                 h,
                 d
             );
+
 
 
         }
@@ -180,6 +148,7 @@ window.addEventListener(
         );
 
 
+
     if(faceSelect){
 
 
@@ -194,11 +163,11 @@ window.addEventListener(
 
 
             }
+
         );
 
 
     }
-
 
 
 
@@ -217,11 +186,14 @@ window.addEventListener(
 
 
 
+
     if(imageInput){
 
 
         imageInput.addEventListener(
+
         "change",
+
         async(e)=>{
 
 
@@ -236,46 +208,21 @@ window.addEventListener(
 
 
 
+
             const img =
-                await loadTexture(file);
+                await loadTexture(
+                    file
+                );
 
 
 
-            sourceImage = img;
+            sourceImage =
+                img;
 
 
 
-            // 選択画面表示
-
-            setImage(img);
-
-
-
-
-
-
-            // 3D Texture作成
-
-
-            const texture =
-                new THREE.Texture(img);
-
-
-
-            texture.flipY = true;
-
-
-            texture.colorSpace =
-                THREE.SRGBColorSpace;
-
-
-
-            texture.needsUpdate = true;
-
-
-
-            setBoxTexture(
-                texture
+            setImage(
+                img
             );
 
 
@@ -292,7 +239,7 @@ window.addEventListener(
 
 
     // =====================
-    // 箱生成
+    // BOX生成
     // =====================
 
     const createButton =
@@ -302,37 +249,41 @@ window.addEventListener(
 
 
 
+
     if(createButton){
 
 
         createButton.addEventListener(
+
         "click",
+
         ()=>{
+
 
 
             const w =
                 Number(
-                document
-                .getElementById("width")
-                .value
+                    document
+                    .getElementById("width")
+                    .value
                 );
 
 
 
             const h =
                 Number(
-                document
-                .getElementById("height")
-                .value
+                    document
+                    .getElementById("height")
+                    .value
                 );
 
 
 
             const d =
                 Number(
-                document
-                .getElementById("depth")
-                .value
+                    document
+                    .getElementById("depth")
+                    .value
                 );
 
 
@@ -342,6 +293,7 @@ window.addEventListener(
                 h,
                 d
             );
+
 
 
         });
