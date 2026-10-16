@@ -1,94 +1,133 @@
-import * as THREE from "three";
-import { applyBoxUV } from "./uv.js";
-
-let boxMesh = null;
+export function applyBoxUV(geometry){
 
 
-export function createBox(scene, width, height, depth, texture = null) {
+    const uv =
+        geometry.attributes.uv;
 
 
-    // 古い箱削除
-    if (boxMesh) {
+    /*
+    
+    BoxGeometry face order
 
-        scene.remove(boxMesh);
+    right
+    left
+    top
+    bottom
+    front
+    back
 
-        boxMesh.geometry.dispose();
+    各面6頂点
 
-        if (Array.isArray(boxMesh.material)) {
+    */
 
-            boxMesh.material.forEach(m => m.dispose());
 
-        } else {
+    const faces = [
 
-            boxMesh.material.dispose();
+        {
+            u1:0.50,
+            v1:0.33,
+            u2:0.75,
+            v2:0.66
+        },
 
+        {
+            u1:0.00,
+            v1:0.33,
+            u2:0.25,
+            v2:0.66
+        },
+
+        {
+            u1:0.25,
+            v1:0.00,
+            u2:0.50,
+            v2:0.33
+        },
+
+        {
+            u1:0.25,
+            v1:0.66,
+            u2:0.50,
+            v2:1.00
+        },
+
+        {
+            u1:0.25,
+            v1:0.33,
+            u2:0.50,
+            v2:0.66
+        },
+
+        {
+            u1:0.75,
+            v1:0.33,
+            u2:1.00,
+            v2:0.66
         }
 
-        boxMesh = null;
-
-    }
+    ];
 
 
-    const w = Number(width);
-    const h = Number(height);
-    const d = Number(depth);
+
+    let offset = 0;
 
 
-    const geometry = new THREE.BoxGeometry(
-        w,
-        h,
-        d
-    );
+
+    faces.forEach(face=>{
 
 
-    // 展開図UV設定
-    applyBoxUV(
-        geometry,
-        w,
-        h,
-        d
-    );
+        // 1枚の面 = 6頂点
+
+        uv.setXY(
+            offset,
+            face.u1,
+            face.v1
+        );
 
 
-    const material = new THREE.MeshStandardMaterial({
+        uv.setXY(
+            offset+1,
+            face.u2,
+            face.v1
+        );
 
-        map: texture,
 
-        color: texture ? 0xffffff : 0xffffff,
+        uv.setXY(
+            offset+2,
+            face.u2,
+            face.v2
+        );
 
-        roughness: 0.95,
 
-        metalness: 0
+        uv.setXY(
+            offset+3,
+            face.u1,
+            face.v1
+        );
+
+
+        uv.setXY(
+            offset+4,
+            face.u2,
+            face.v2
+        );
+
+
+        uv.setXY(
+            offset+5,
+            face.u1,
+            face.v2
+        );
+
+
+        offset += 6;
+
 
     });
 
 
-    boxMesh = new THREE.Mesh(
-        geometry,
-        material
-    );
 
+    uv.needsUpdate = true;
 
-    // 床に置く
-    boxMesh.position.y = h / 2;
-
-
-    boxMesh.castShadow = true;
-
-    boxMesh.receiveShadow = true;
-
-
-    scene.add(boxMesh);
-
-
-    return boxMesh;
-
-}
-
-
-
-export function getBox(){
-
-    return boxMesh;
 
 }
