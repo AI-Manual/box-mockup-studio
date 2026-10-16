@@ -38,46 +38,55 @@ export function getImage(){
 
 }
 
-export function cropTexture(rect){
+export function cropTexture(rect, face = "front") {
 
-    if(!sourceImage) return null;
+    if (!sourceImage) return null;
 
-    const canvas=document.createElement("canvas");
+    const sizes = {
 
-    canvas.width=rect.width;
+        front:  { w: 1024, h: 1024 },
+        back:   { w: 1024, h: 1024 },
+        left:   { w: 1024, h: 1024 },
+        right:  { w: 1024, h: 1024 },
+        top:    { w: 1024, h: 1024 },
+        bottom: { w: 1024, h: 1024 }
 
-    canvas.height=rect.height;
+    };
 
-    const ctx=canvas.getContext("2d");
+    const size = sizes[face];
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = size.w;
+    canvas.height = size.h;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
     ctx.drawImage(
 
         sourceImage,
 
         rect.x,
-
         rect.y,
-
         rect.width,
-
         rect.height,
 
         0,
-
         0,
-
-        rect.width,
-
-        rect.height
+        size.w,
+        size.h
 
     );
 
-    const tex=new THREE.CanvasTexture(canvas);
+    const texture = new THREE.CanvasTexture(canvas);
 
-    tex.colorSpace=THREE.SRGBColorSpace;
+    texture.colorSpace = THREE.SRGBColorSpace;
 
-    tex.needsUpdate=true;
+    texture.needsUpdate = true;
 
-    return tex;
+    return texture;
 
 }
