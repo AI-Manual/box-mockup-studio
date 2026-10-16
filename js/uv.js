@@ -4,74 +4,56 @@
 // =======================================
 
 
-// 面ごとのUV範囲保存
+// 面ごとのUV範囲
 
 const faceAreas = {
 
 
-    front: {
-
+    front:{
         u1:0.25,
         v1:0.33,
-
         u2:0.50,
         v2:0.66
-
     },
 
 
-    back: {
-
+    back:{
         u1:0.75,
         v1:0.33,
-
         u2:1.00,
         v2:0.66
-
     },
 
 
-    left: {
-
+    left:{
         u1:0.00,
         v1:0.33,
-
         u2:0.25,
         v2:0.66
-
     },
 
 
-    right: {
-
+    right:{
         u1:0.50,
         v1:0.33,
-
         u2:0.75,
         v2:0.66
-
     },
 
 
-    top: {
-
+    top:{
         u1:0.25,
         v1:0.00,
-
         u2:0.50,
         v2:0.33
-
     },
 
 
-    bottom: {
-
+    bottom:{
         u1:0.25,
         v1:0.66,
-
         u2:0.50,
         v2:1.00
-
     }
 
 };
@@ -93,7 +75,7 @@ export function setFaceUV(
     if(!faceAreas[face]){
 
         console.warn(
-            "Unknown face:",
+            "Unknown face",
             face
         );
 
@@ -102,19 +84,15 @@ export function setFaceUV(
     }
 
 
-
     faceAreas[face] = {
 
         u1:area.u1,
-
         v1:area.v1,
 
         u2:area.u2,
-
         v2:area.v2
 
     };
-
 
 
     console.log(
@@ -133,7 +111,7 @@ export function setFaceUV(
 
 
 // =======================================
-// 面UV取得
+// UV取得
 // =======================================
 
 export function getFaceUV(face){
@@ -148,19 +126,22 @@ export function getFaceUV(face){
 
 
 
+
 // =======================================
-// BoxGeometry UV適用
-// NonIndexed対応
+// BoxGeometryへUV適用
 //
-// 面順
-// right
-// left
-// top
-// bottom
-// front
-// back
+// NonIndexed
+// 6面 × 6頂点
 //
-// 1面6頂点
+// BoxGeometry順:
+//
+// 0 right
+// 1 left
+// 2 top
+// 3 bottom
+// 4 front
+// 5 back
+//
 // =======================================
 
 export function applyBoxUV(
@@ -182,23 +163,53 @@ export function applyBoxUV(
 
 
 
-    const mappings = [
+    const faces = [
 
 
-        faceAreas.right,
+        // right
+        {
+            area:faceAreas.right,
+            flip:false
+        },
 
-        faceAreas.left,
 
-        faceAreas.top,
+        // left
+        {
+            area:faceAreas.left,
+            flip:true
+        },
 
-        faceAreas.bottom,
 
-        faceAreas.front,
+        // top
+        {
+            area:faceAreas.top,
+            flip:false
+        },
 
-        faceAreas.back
+
+        // bottom
+        {
+            area:faceAreas.bottom,
+            flip:true
+        },
+
+
+        // front
+        {
+            area:faceAreas.front,
+            flip:false
+        },
+
+
+        // back
+        {
+            area:faceAreas.back,
+            flip:true
+        }
 
 
     ];
+
 
 
 
@@ -206,58 +217,114 @@ export function applyBoxUV(
 
 
 
-    mappings.forEach(area=>{
+
+    faces.forEach(face=>{
 
 
-        // 三角形1
-
-        uv.setXY(
-            offset,
-            area.u1,
-            area.v1
-        );
-
-
-        uv.setXY(
-            offset + 1,
-            area.u2,
-            area.v1
-        );
-
-
-        uv.setXY(
-            offset + 2,
-            area.u2,
-            area.v2
-        );
+        const a =
+            face.area;
 
 
 
-        // 三角形2
-
-        uv.setXY(
-            offset + 3,
-            area.u1,
-            area.v1
-        );
+        if(face.flip){
 
 
-        uv.setXY(
-            offset + 4,
-            area.u2,
-            area.v2
-        );
+            // 左右反転
+
+            uv.setXY(
+                offset,
+                a.u2,
+                a.v1
+            );
 
 
-        uv.setXY(
-            offset + 5,
-            area.u1,
-            area.v2
-        );
+            uv.setXY(
+                offset+1,
+                a.u1,
+                a.v1
+            );
+
+
+            uv.setXY(
+                offset+2,
+                a.u1,
+                a.v2
+            );
+
+
+            uv.setXY(
+                offset+3,
+                a.u2,
+                a.v1
+            );
+
+
+            uv.setXY(
+                offset+4,
+                a.u1,
+                a.v2
+            );
+
+
+            uv.setXY(
+                offset+5,
+                a.u2,
+                a.v2
+            );
+
+
+
+        }else{
+
+
+            uv.setXY(
+                offset,
+                a.u1,
+                a.v1
+            );
+
+
+            uv.setXY(
+                offset+1,
+                a.u2,
+                a.v1
+            );
+
+
+            uv.setXY(
+                offset+2,
+                a.u2,
+                a.v2
+            );
+
+
+            uv.setXY(
+                offset+3,
+                a.u1,
+                a.v1
+            );
+
+
+            uv.setXY(
+                offset+4,
+                a.u2,
+                a.v2
+            );
+
+
+            uv.setXY(
+                offset+5,
+                a.u1,
+                a.v2
+            );
+
+
+        }
 
 
 
         offset += 6;
+
 
 
     });
