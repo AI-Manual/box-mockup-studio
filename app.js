@@ -1,63 +1,44 @@
 import { initScene, updateBoxSize } from "./js/scene.js";
+import { loadTexture, cropTexture } from "./js/texture.js";
+import { initSelector, setImage } from "./js/selector.js";
+import { setFaceTexture } from "./js/uv.js";
 
-window.addEventListener("DOMContentLoaded",()=>{
+window.addEventListener("DOMContentLoaded", () => {
 
     initScene();
 
+    initSelector("selectorCanvas", (rect) => {
+
+        const tex = cropTexture(rect);
+
+        setFaceTexture("front", tex);
+
+    });
+
     document
         .getElementById("createBox")
-        .addEventListener("click",()=>{
+        .addEventListener("click", () => {
 
-            const w =
-                document.getElementById("width").value;
+            const w = document.getElementById("width").value;
+            const h = document.getElementById("height").value;
+            const d = document.getElementById("depth").value;
 
-            const h =
-                document.getElementById("height").value;
-
-            const d =
-                document.getElementById("depth").value;
-
-            updateBoxSize(w,h,d);
+            updateBoxSize(w, h, d);
 
         });
 
-});
+    document
+        .getElementById("imageInput")
+        .addEventListener("change", async (e) => {
 
-import { loadTexture } from "./js/texture.js";
+            const file = e.target.files[0];
 
-document
-.getElementById("imageInput")
-.addEventListener("change",async(e)=>{
+            if (!file) return;
 
-    const file=e.target.files[0];
+            const img = await loadTexture(file);
 
-    if(!file) return;
+            setImage(img);
 
-    await loadTexture(file);
-
-    alert("画像を読み込みました");
-
-});
-
-import { getImage, loadTexture } from "./js/texture.js";
-import { initSelector, setImage } from "./js/selector.js";
-
-initSelector("selectorCanvas",(rect)=>{
-
-    console.log(rect);
-
-});
-
-document
-.getElementById("imageInput")
-.addEventListener("change",async(e)=>{
-
-    const file=e.target.files[0];
-
-    if(!file) return;
-
-    const img=await loadTexture(file);
-
-    setImage(img);
+        });
 
 });
