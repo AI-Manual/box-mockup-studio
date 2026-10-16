@@ -5,6 +5,7 @@ let sourceImage = null;
 
 
 
+
 // =======================================
 // 画像読込
 // =======================================
@@ -49,7 +50,9 @@ export async function loadTexture(file){
 
 
 
-        reader.onerror = reject;
+        reader.onerror =
+            reject;
+
 
 
         reader.readAsDataURL(file);
@@ -95,6 +98,26 @@ export function cropTexture(
 
 
 
+    if(
+        !rect ||
+        rect.width <= 0 ||
+        rect.height <= 0
+    ){
+
+        console.warn(
+            "Invalid crop rect",
+            rect
+        );
+
+        return null;
+
+    }
+
+
+
+
+
+
     const canvas =
         document.createElement(
             "canvas"
@@ -103,6 +126,7 @@ export function cropTexture(
 
 
     const size = 1024;
+
 
 
     canvas.width =
@@ -116,10 +140,13 @@ export function cropTexture(
 
 
 
+
     const ctx =
         canvas.getContext(
             "2d"
         );
+
+
 
 
 
@@ -135,9 +162,13 @@ export function cropTexture(
 
 
 
+
+    // 元画像から選択範囲をコピー
+
     ctx.drawImage(
 
         sourceImage,
+
 
         rect.x,
         rect.y,
@@ -158,10 +189,14 @@ export function cropTexture(
 
 
 
+
+
+
     const texture =
         new THREE.CanvasTexture(
             canvas
         );
+
 
 
 
@@ -170,13 +205,45 @@ export function cropTexture(
 
 
 
+
+
+    // CanvasとThree.js UV方向補正
+
     texture.flipY =
-        false;
+        true;
+
+
+
+
+
+    // 左右反転補正
+
+    texture.wrapS =
+        THREE.RepeatWrapping;
+
+
+    texture.repeat.x =
+        -1;
+
+
+    texture.offset.x =
+        1;
+
+
+
 
 
 
     texture.needsUpdate =
         true;
+
+
+
+
+    console.log(
+        "cropTexture created",
+        rect
+    );
 
 
 
