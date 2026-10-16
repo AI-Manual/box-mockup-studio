@@ -251,3 +251,16 @@ main{
 
 }
 
+#selectorCanvas{
+
+    width:100%;
+
+    border:1px solid #bbb;
+
+    margin-top:10px;
+
+    cursor:crosshair;
+
+    background:#fff;
+
+}
