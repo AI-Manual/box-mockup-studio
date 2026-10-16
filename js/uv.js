@@ -4,8 +4,9 @@
 // =======================================
 
 
-const faceAreas = {
+// 面ごとのUV範囲保存
 
+const faceAreas = {
 
     front: {
 
@@ -87,6 +88,7 @@ export function setFaceUV(
     area
 ){
 
+
     if(!faceAreas[face]){
 
         console.warn(
@@ -99,18 +101,31 @@ export function setFaceUV(
     }
 
 
+
     faceAreas[face] = {
 
         u1: area.u1,
+
         v1: area.v1,
 
         u2: area.u2,
+
         v2: area.v2
 
     };
 
 
+
+    console.log(
+        "setFaceUV",
+        face,
+        faceAreas[face]
+    );
+
+
 }
+
+
 
 
 
@@ -130,6 +145,8 @@ export function getFaceUV(face){
 
 
 
+
+
 // =======================================
 // BoxGeometryへUV適用
 // =======================================
@@ -139,6 +156,15 @@ export function applyBoxUV(
 ){
 
 
+    console.log(
+        "applyBoxUV current",
+        JSON.parse(
+            JSON.stringify(faceAreas)
+        )
+    );
+
+
+
     const uv =
         geometry.attributes.uv;
 
@@ -146,22 +172,25 @@ export function applyBoxUV(
 
     /*
     
-    BoxGeometry面順
+    BoxGeometry順序
 
-    0 right
-    1 left
-    2 top
-    3 bottom
-    4 front
-    5 back
+    right
+    left
+    top
+    bottom
+    front
+    back
 
-    各面4頂点
 
+    ※ Three.js BoxGeometry
+       1面4頂点
+    
     */
 
 
 
     const mappings = [
+
 
         faceAreas.right,
 
@@ -175,6 +204,7 @@ export function applyBoxUV(
 
         faceAreas.back
 
+
     ];
 
 
@@ -183,43 +213,60 @@ export function applyBoxUV(
 
 
 
-    mappings.forEach(area=>{
+    mappings.forEach(
+        area=>{
 
 
-        // 左上
         uv.setXY(
+
             offset,
+
             area.u1,
+
             area.v1
+
         );
 
 
-        // 右上
+
         uv.setXY(
+
             offset + 1,
+
             area.u2,
+
             area.v1
+
         );
 
 
-        // 右下
+
         uv.setXY(
+
             offset + 2,
+
             area.u2,
+
             area.v2
+
         );
 
 
-        // 左下
+
         uv.setXY(
+
             offset + 3,
+
             area.u1,
+
             area.v2
+
         );
 
 
 
         offset += 4;
+
 
 
     });
