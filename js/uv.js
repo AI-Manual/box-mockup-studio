@@ -8,6 +8,7 @@
 
 const faceAreas = {
 
+
     front: {
 
         u1:0.25,
@@ -104,13 +105,13 @@ export function setFaceUV(
 
     faceAreas[face] = {
 
-        u1: area.u1,
+        u1:area.u1,
 
-        v1: area.v1,
+        v1:area.v1,
 
-        u2: area.u2,
+        u2:area.u2,
 
-        v2: area.v2
+        v2:area.v2
 
     };
 
@@ -148,7 +149,18 @@ export function getFaceUV(face){
 
 
 // =======================================
-// BoxGeometryへUV適用
+// BoxGeometry UV適用
+// NonIndexed対応
+//
+// 面順
+// right
+// left
+// top
+// bottom
+// front
+// back
+//
+// 1面6頂点
 // =======================================
 
 export function applyBoxUV(
@@ -167,25 +179,6 @@ export function applyBoxUV(
 
     const uv =
         geometry.attributes.uv;
-
-
-
-    /*
-    
-    BoxGeometry順序
-
-    right
-    left
-    top
-    bottom
-    front
-    back
-
-
-    ※ Three.js BoxGeometry
-       1面4頂点
-    
-    */
 
 
 
@@ -213,60 +206,58 @@ export function applyBoxUV(
 
 
 
-    mappings.forEach(
-        area=>{
+    mappings.forEach(area=>{
 
+
+        // 三角形1
 
         uv.setXY(
-
             offset,
-
             area.u1,
-
             area.v1
-
         );
 
 
-
         uv.setXY(
-
             offset + 1,
-
             area.u2,
-
             area.v1
-
         );
 
 
-
         uv.setXY(
-
             offset + 2,
-
             area.u2,
-
             area.v2
-
         );
 
+
+
+        // 三角形2
+
+        uv.setXY(
+            offset + 3,
+            area.u1,
+            area.v1
+        );
 
 
         uv.setXY(
-
-            offset + 3,
-
-            area.u1,
-
+            offset + 4,
+            area.u2,
             area.v2
+        );
 
+
+        uv.setXY(
+            offset + 5,
+            area.u1,
+            area.v2
         );
 
 
 
-        offset += 4;
-
+        offset += 6;
 
 
     });
