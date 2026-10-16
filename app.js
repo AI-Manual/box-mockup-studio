@@ -1,7 +1,7 @@
 import { initScene, updateBoxSize } from "./js/scene.js";
 import { loadTexture, cropTexture } from "./js/texture.js";
 import { initSelector, setImage } from "./js/selector.js";
-import { setFaceTexture } from "./js/uv.js";
+import { setFaceTexture, clearTextures } from "./js/uv.js";
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -11,7 +11,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const tex = cropTexture(rect);
 
-        setFaceTexture("front", tex);
+        const face = document
+            .getElementById("faceSelect")
+            .value;
+
+        setFaceTexture(face, tex);
 
     });
 
@@ -34,6 +38,8 @@ window.addEventListener("DOMContentLoaded", () => {
             const file = e.target.files[0];
 
             if (!file) return;
+
+            clearTextures();
 
             const img = await loadTexture(file);
 
