@@ -1,133 +1,109 @@
-export function applyBoxUV(geometry){
+import * as THREE from "three";
+import { applyBoxUV } from "./uv.js";
+
+let boxMesh = null;
 
 
-    const uv =
-        geometry.attributes.uv;
+export function createBox(
+    scene,
+    width,
+    height,
+    depth,
+    texture = null
+) {
 
 
-    /*
-    
-    BoxGeometry face order
+    if (boxMesh) {
 
-    right
-    left
-    top
-    bottom
-    front
-    back
+        scene.remove(boxMesh);
 
-    各面6頂点
+        boxMesh.geometry.dispose();
 
-    */
+        if (Array.isArray(boxMesh.material)) {
 
+            boxMesh.material.forEach(m => m.dispose());
 
-    const faces = [
+        } else {
 
-        {
-            u1:0.50,
-            v1:0.33,
-            u2:0.75,
-            v2:0.66
-        },
+            boxMesh.material.dispose();
 
-        {
-            u1:0.00,
-            v1:0.33,
-            u2:0.25,
-            v2:0.66
-        },
-
-        {
-            u1:0.25,
-            v1:0.00,
-            u2:0.50,
-            v2:0.33
-        },
-
-        {
-            u1:0.25,
-            v1:0.66,
-            u2:0.50,
-            v2:1.00
-        },
-
-        {
-            u1:0.25,
-            v1:0.33,
-            u2:0.50,
-            v2:0.66
-        },
-
-        {
-            u1:0.75,
-            v1:0.33,
-            u2:1.00,
-            v2:0.66
         }
 
-    ];
+        boxMesh = null;
+
+    }
+
+
+    const w = Number(width);
+    const h = Number(height);
+    const d = Number(depth);
 
 
 
-    let offset = 0;
-
-
-
-    faces.forEach(face=>{
-
-
-        // 1枚の面 = 6頂点
-
-        uv.setXY(
-            offset,
-            face.u1,
-            face.v1
+    const geometry =
+        new THREE.BoxGeometry(
+            w,
+            h,
+            d
         );
 
 
-        uv.setXY(
-            offset+1,
-            face.u2,
-            face.v1
+
+    applyBoxUV(
+        geometry,
+        w,
+        h,
+        d
+    );
+
+
+
+    const material =
+        new THREE.MeshStandardMaterial({
+
+            map:texture,
+
+            color:0xffffff,
+
+            roughness:0.95,
+
+            metalness:0
+
+        });
+
+
+
+    boxMesh =
+        new THREE.Mesh(
+            geometry,
+            material
         );
 
 
-        uv.setXY(
-            offset+2,
-            face.u2,
-            face.v2
-        );
 
-
-        uv.setXY(
-            offset+3,
-            face.u1,
-            face.v1
-        );
-
-
-        uv.setXY(
-            offset+4,
-            face.u2,
-            face.v2
-        );
-
-
-        uv.setXY(
-            offset+5,
-            face.u1,
-            face.v2
-        );
-
-
-        offset += 6;
-
-
-    });
+    boxMesh.position.y =
+        h / 2;
 
 
 
-    uv.needsUpdate = true;
+    boxMesh.castShadow = true;
 
+    boxMesh.receiveShadow = true;
+
+
+
+    scene.add(boxMesh);
+
+
+
+    return boxMesh;
+
+}
+
+
+
+export function getBox(){
+
+    return boxMesh;
 
 }
