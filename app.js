@@ -9,15 +9,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
     initSelector("selectorCanvas", (rect) => {
 
-        const tex = cropTexture(rect);
+    const face = document
+        .getElementById("faceSelect")
+        .value;
 
-        const face = document
-            .getElementById("faceSelect")
-            .value;
+    const tex = cropTexture(rect, face);
 
-        setFaceTexture(face, tex);
+    setFaceTexture(face, tex);
 
-    });
+});
 
     document
         .getElementById("createBox")
