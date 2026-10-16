@@ -1,1 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Box Mockup Studio</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script type="importmap">
+{
+  "imports": {
+    "three":"https://unpkg.com/three@0.179.1/build/three.module.js",
+    "three/addons/":"https://unpkg.com/three@0.179.1/examples/jsm/"
+  }
+}
+</script>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>📦 Box Mockup Studio</h1>
+
+<p>
+Web Package Mockup Generator
+</p>
+
+</header>
+
+<div id="container">
+
+    <aside id="leftPanel">
+
+        <h2>展開図</h2>
+
+        <input
+            type="file"
+            id="imageInput"
+            accept=".png,.jpg,.jpeg,.pdf">
+
+        <hr>
+
+        <h2>寸法(mm)</h2>
+
+        <label>横幅</label>
+        <input type="number" id="width" value="250">
+
+        <label>高さ</label>
+        <input type="number" id="height" value="180">
+
+        <label>奥行</label>
+        <input type="number" id="depth" value="120">
+
+        <hr>
+
+        <h2>箱タイプ</h2>
+
+        <select id="boxType">
+
+            <option>A式ケース</option>
+            <option>B式ケース</option>
+            <option>キャラメル箱</option>
+            <option>N式</option>
+            <option>ワンタッチ底</option>
+            <option>地獄底</option>
+
+        </select>
+
+        <hr>
+
+        <button id="createBox">
+
+            3D生成
+
+        </button>
+
+        <button id="resetCamera">
+
+            カメラリセット
+
+        </button>
+
+        <button id="savePNG">
+
+            PNG保存
+
+        </button>
+
+    </aside>
+
+    <main>
+
+        <div id="viewer"></div>
+
+    </main>
+
+</div>
+
+<footer>
+
+Box Mockup Studio Version 1.0
+
+</footer>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
