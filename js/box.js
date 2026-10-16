@@ -11,13 +11,20 @@ export function createBox(scene, width, height, depth) {
 
         boxMesh.geometry.dispose();
 
-        boxMesh.material.dispose();
+        if (Array.isArray(boxMesh.material)) {
+
+            boxMesh.material.forEach(m => m.dispose());
+
+        } else {
+
+            boxMesh.material.dispose();
+
+        }
 
         boxMesh = null;
 
     }
 
-    // mm → Three.js単位
     const w = Number(width);
     const h = Number(height);
     const d = Number(depth);
@@ -30,11 +37,9 @@ export function createBox(scene, width, height, depth) {
 
     const material = new THREE.MeshStandardMaterial({
 
-        color:0xffffff,
-
-        roughness:0.95,
-
-        metalness:0
+        color: 0xffffff,
+        roughness: 0.95,
+        metalness: 0
 
     });
 
@@ -43,10 +48,8 @@ export function createBox(scene, width, height, depth) {
         material
     );
 
-    // 床の上に置く
     boxMesh.position.y = h / 2;
 
-    // 影
     boxMesh.castShadow = true;
     boxMesh.receiveShadow = true;
 
@@ -56,7 +59,7 @@ export function createBox(scene, width, height, depth) {
 
 }
 
-export function getBox(){
+export function getBox() {
 
     return boxMesh;
 
