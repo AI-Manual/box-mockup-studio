@@ -262,7 +262,7 @@ window.addEventListener(
 
 
 
-            texture.flipY = false;
+            texture.flipY = true;
 
 
             texture.colorSpace =
