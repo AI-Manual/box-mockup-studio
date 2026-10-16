@@ -2,50 +2,90 @@ import * as THREE from "three";
 import { getBox } from "./box.js";
 
 const textures = {
-
-    front:null,
-    back:null,
-    left:null,
-    right:null,
-    top:null,
-    bottom:null
-
+    front: null,
+    back: null,
+    left: null,
+    right: null,
+    top: null,
+    bottom: null
 };
 
-export function clearTextures(){
+export function setFaceTexture(face, texture) {
 
-    textures.front=null;
-    textures.back=null;
-    textures.left=null;
-    textures.right=null;
-    textures.top=null;
-    textures.bottom=null;
+    if (!textures.hasOwnProperty(face)) {
+        console.warn("Unknown face:", face);
+        return;
+    }
 
-    updateBoxTexture();
-
-}
-
-export function setFaceTexture(face,texture){
-
-    textures[face]=texture;
+    textures[face] = texture;
 
     updateBoxTexture();
 
 }
 
-export function getFaceTexture(face){
+export function getFaceTexture(face) {
 
     return textures[face];
 
 }
 
-function updateBoxTexture(){
+export function clearTextures() {
 
-    const box=getBox();
+    Object.keys(textures).forEach(key => {
 
-    if(!box) return;
+        textures[key] = null;
 
-    const materials=[
+    });
+
+    updateBoxTexture();
+
+}
+
+function createMaterial(texture) {
+
+    if (texture) {
+
+        texture.needsUpdate = true;
+
+        return new THREE.MeshStandardMaterial({
+
+            map: texture,
+            roughness: 0.95,
+            metalness: 0
+
+        });
+
+    }
+
+    return new THREE.MeshStandardMaterial({
+
+        color: 0xffffff,
+        roughness: 0.95,
+        metalness: 0
+
+    });
+
+}
+
+function updateBoxTexture() {
+
+    const box = getBox();
+
+    if (!box) return;
+
+    // 以前のマテリアルを破棄
+    if (Array.isArray(box.material)) {
+
+        box.material.forEach(m => m.dispose());
+
+    } else if (box.material) {
+
+        box.material.dispose();
+
+    }
+
+    // Three.js BoxGeometry の面順
+    box.material = [
 
         createMaterial(textures.right),   // +X
         createMaterial(textures.left),    // -X
@@ -55,39 +95,5 @@ function updateBoxTexture(){
         createMaterial(textures.back)     // -Z
 
     ];
-
-    box.material.dispose();
-
-    box.material=materials;
-
-}
-
-function createMaterial(texture){
-
-    if(texture){
-
-        texture.needsUpdate=true;
-
-        return new THREE.MeshStandardMaterial({
-
-            map:texture,
-
-            roughness:0.95,
-
-            metalness:0
-
-        });
-
-    }
-
-    return new THREE.MeshStandardMaterial({
-
-        color:0xffffff,
-
-        roughness:0.95,
-
-        metalness:0
-
-    });
 
 }
