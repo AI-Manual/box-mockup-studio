@@ -12,6 +12,19 @@ const textures = {
 
 };
 
+export function clearTextures(){
+
+    textures.front=null;
+    textures.back=null;
+    textures.left=null;
+    textures.right=null;
+    textures.top=null;
+    textures.bottom=null;
+
+    updateBoxTexture();
+
+}
+
 export function setFaceTexture(face,texture){
 
     textures[face]=texture;
