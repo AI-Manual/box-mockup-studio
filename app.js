@@ -20,6 +20,11 @@ import {
 } from "./js/selector.js";
 
 
+import {
+    setFaceUV
+} from "./js/uv.js";
+
+
 
 let sourceImage = null;
 
@@ -38,12 +43,15 @@ window.addEventListener(
 
 
 
+
     // =====================
     // 展開図選択初期化
     // =====================
 
     initSelector(
+
         "selectorCanvas",
+
 
         (face, rect)=>{
 
@@ -55,9 +63,104 @@ window.addEventListener(
             );
 
 
+
+            if(!sourceImage)
+                return;
+
+
+
+            /*
+            
+            Canvas座標
+            ↓
+            UV座標へ変換
+            
+            Three.js UV
+            0〜1
+            
+            */
+
+
+            const area = {
+
+
+                u1:
+                    rect.x /
+                    sourceImage.width,
+
+
+                v1:
+                    rect.y /
+                    sourceImage.height,
+
+
+                u2:
+                    (rect.x + rect.width) /
+                    sourceImage.width,
+
+
+                v2:
+                    (rect.y + rect.height) /
+                    sourceImage.height
+
+
+            };
+
+
+
+            setFaceUV(
+                face,
+                area
+            );
+
+
+
+            console.log(
+                "UV updated",
+                face,
+                area
+            );
+
+
+
+            // サイズ再取得して反映
+
+            const w =
+                Number(
+                document
+                .getElementById("width")
+                .value
+                );
+
+
+            const h =
+                Number(
+                document
+                .getElementById("height")
+                .value
+                );
+
+
+            const d =
+                Number(
+                document
+                .getElementById("depth")
+                .value
+                );
+
+
+            updateBoxSize(
+                w,
+                h,
+                d
+            );
+
+
         }
 
     );
+
+
 
 
 
@@ -97,6 +200,8 @@ window.addEventListener(
 
 
 
+
+
     // =====================
     // 画像読込
     // =====================
@@ -126,6 +231,7 @@ window.addEventListener(
 
 
 
+
             const img =
                 await loadTexture(file);
 
@@ -135,20 +241,24 @@ window.addEventListener(
 
 
 
-            // 選択Canvasへ表示
+            // 選択画面表示
+
             setImage(img);
 
 
 
 
-            // 3D用Texture作成
+
+
+            // 3D Texture作成
+
 
             const texture =
                 new THREE.Texture(img);
 
 
 
-            texture.flipY=false;
+            texture.flipY = false;
 
 
             texture.colorSpace =
@@ -156,13 +266,14 @@ window.addEventListener(
 
 
 
-            texture.needsUpdate=true;
+            texture.needsUpdate = true;
 
 
 
             setBoxTexture(
                 texture
             );
+
 
 
         });
@@ -203,12 +314,14 @@ window.addEventListener(
                 );
 
 
+
             const h =
                 Number(
                 document
                 .getElementById("height")
                 .value
                 );
+
 
 
             const d =
