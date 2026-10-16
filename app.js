@@ -38,3 +38,26 @@ document
     alert("画像を読み込みました");
 
 });
+
+import { getImage, loadTexture } from "./js/texture.js";
+import { initSelector, setImage } from "./js/selector.js";
+
+initSelector("selectorCanvas",(rect)=>{
+
+    console.log(rect);
+
+});
+
+document
+.getElementById("imageInput")
+.addEventListener("change",async(e)=>{
+
+    const file=e.target.files[0];
+
+    if(!file) return;
+
+    const img=await loadTexture(file);
+
+    setImage(img);
+
+});
