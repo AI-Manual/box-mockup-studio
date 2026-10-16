@@ -4,9 +4,6 @@
 // =======================================
 
 
-
-// 面ごとのUV範囲保存
-
 const faceAreas = {
 
 
@@ -82,7 +79,7 @@ const faceAreas = {
 
 
 // =======================================
-// 面UV設定
+// 面UV変更
 // =======================================
 
 export function setFaceUV(
@@ -102,7 +99,15 @@ export function setFaceUV(
     }
 
 
-    faceAreas[face] = area;
+    faceAreas[face] = {
+
+        u1: area.u1,
+        v1: area.v1,
+
+        u2: area.u2,
+        v2: area.v2
+
+    };
 
 
 }
@@ -110,8 +115,9 @@ export function setFaceUV(
 
 
 
+
 // =======================================
-// 全面UV取得
+// 面UV取得
 // =======================================
 
 export function getFaceUV(face){
@@ -129,10 +135,7 @@ export function getFaceUV(face){
 // =======================================
 
 export function applyBoxUV(
-    geometry,
-    width,
-    height,
-    depth
+    geometry
 ){
 
 
@@ -143,7 +146,7 @@ export function applyBoxUV(
 
     /*
     
-    BoxGeometry順序
+    BoxGeometry面順
 
     0 right
     1 left
@@ -152,13 +155,13 @@ export function applyBoxUV(
     4 front
     5 back
 
-    各面6頂点
+    各面4頂点
 
     */
 
 
-    const mappings = [
 
+    const mappings = [
 
         faceAreas.right,
 
@@ -172,7 +175,6 @@ export function applyBoxUV(
 
         faceAreas.back
 
-
     ];
 
 
@@ -184,6 +186,7 @@ export function applyBoxUV(
     mappings.forEach(area=>{
 
 
+        // 左上
         uv.setXY(
             offset,
             area.u1,
@@ -191,44 +194,32 @@ export function applyBoxUV(
         );
 
 
+        // 右上
         uv.setXY(
-            offset+1,
+            offset + 1,
             area.u2,
             area.v1
         );
 
 
+        // 右下
         uv.setXY(
-            offset+2,
+            offset + 2,
             area.u2,
             area.v2
         );
 
 
-
+        // 左下
         uv.setXY(
-            offset+3,
-            area.u1,
-            area.v1
-        );
-
-
-        uv.setXY(
-            offset+4,
-            area.u2,
-            area.v2
-        );
-
-
-        uv.setXY(
-            offset+5,
+            offset + 3,
             area.u1,
             area.v2
         );
 
 
 
-        offset += 6;
+        offset += 4;
 
 
     });
