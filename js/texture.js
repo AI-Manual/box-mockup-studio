@@ -5,19 +5,27 @@ let sourceImage = null;
 
 
 
+// =======================================
+// 画像読込
+// =======================================
+
 export async function loadTexture(file){
 
 
     return new Promise((resolve,reject)=>{
 
 
-        const reader = new FileReader();
+        const reader =
+            new FileReader();
+
 
 
         reader.onload = e=>{
 
 
-            const img = new Image();
+            const img =
+                new Image();
+
 
 
             img.onload = ()=>{
@@ -25,16 +33,20 @@ export async function loadTexture(file){
 
                 sourceImage = img;
 
+
                 resolve(img);
 
 
             };
 
 
-            img.src = e.target.result;
+
+            img.src =
+                e.target.result;
 
 
         };
+
 
 
         reader.onerror = reject;
@@ -50,6 +62,13 @@ export async function loadTexture(file){
 
 
 
+
+
+
+// =======================================
+// 元画像取得
+// =======================================
+
 export function getImage(){
 
     return sourceImage;
@@ -59,10 +78,15 @@ export function getImage(){
 
 
 
+
+
+
+// =======================================
+// 選択範囲をTexture化
+// =======================================
+
 export function cropTexture(
-    rect,
-    face,
-    boxSize
+    rect
 ){
 
 
@@ -71,76 +95,43 @@ export function cropTexture(
 
 
 
-    const scale = 4;
-
-
-
-    let w;
-    let h;
-
-
-
-    switch(face){
-
-
-        case "front":
-        case "back":
-
-            w = boxSize.width;
-
-            h = boxSize.height;
-
-            break;
-
-
-
-        case "left":
-        case "right":
-
-            w = boxSize.depth;
-
-            h = boxSize.height;
-
-            break;
-
-
-
-        case "top":
-        case "bottom":
-
-            w = boxSize.width;
-
-            h = boxSize.depth;
-
-            break;
-
-
-    }
-
-
-
     const canvas =
-        document.createElement("canvas");
+        document.createElement(
+            "canvas"
+        );
 
+
+
+    const size = 1024;
 
 
     canvas.width =
-        w * scale;
+        size;
 
 
     canvas.height =
-        h * scale;
+        size;
+
+
 
 
 
     const ctx =
-        canvas.getContext("2d");
+        canvas.getContext(
+            "2d"
+        );
 
 
 
-    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingEnabled =
+        true;
 
-    ctx.imageSmoothingQuality = "high";
+
+    ctx.imageSmoothingQuality =
+        "high";
+
+
+
 
 
 
@@ -150,21 +141,27 @@ export function cropTexture(
 
         rect.x,
         rect.y,
+
         rect.width,
         rect.height,
 
+
         0,
         0,
 
-        canvas.width,
-        canvas.height
+        size,
+        size
 
     );
 
 
 
+
+
     const texture =
-        new THREE.CanvasTexture(canvas);
+        new THREE.CanvasTexture(
+            canvas
+        );
 
 
 
@@ -173,7 +170,13 @@ export function cropTexture(
 
 
 
-    texture.needsUpdate = true;
+    texture.flipY =
+        false;
+
+
+
+    texture.needsUpdate =
+        true;
 
 
 
