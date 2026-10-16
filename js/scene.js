@@ -1,3 +1,4 @@
+import { createBox } from "./box.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
@@ -62,7 +63,17 @@ export function initScene(){
 
     createGrid();
 
-    createBox();
+    createBox(
+
+    scene,
+
+    250,
+
+    180,
+
+    120
+
+);
 
     window.addEventListener(
 
