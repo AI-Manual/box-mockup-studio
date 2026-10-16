@@ -118,13 +118,13 @@ function updateBoxTexture() {
     // Three.js BoxGeometry の面順
     box.material = [
 
-        createMaterial(textures.right),   // +X
-        createMaterial(textures.left),    // -X
-        createMaterial(textures.top),     // +Y
-        createMaterial(textures.bottom),  // -Y
-        createMaterial(textures.front),   // +Z
-        createMaterial(textures.back)     // -Z
+    createMaterial(textures.right, "right"),
+    createMaterial(textures.left, "left"),
+    createMaterial(textures.top, "top"),
+    createMaterial(textures.bottom, "bottom"),
+    createMaterial(textures.front, "front"),
+    createMaterial(textures.back, "back")
 
-    ];
+];
 
 }
