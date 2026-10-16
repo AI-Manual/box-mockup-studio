@@ -1,36 +1,54 @@
 import * as THREE from "three";
 
+
 let sourceImage = null;
+
+
 
 export async function loadTexture(file){
 
+
     return new Promise((resolve,reject)=>{
+
 
         const reader = new FileReader();
 
+
         reader.onload = e=>{
+
 
             const img = new Image();
 
-            img.onload=()=>{
+
+            img.onload = ()=>{
+
 
                 sourceImage = img;
 
                 resolve(img);
 
+
             };
+
 
             img.src = e.target.result;
 
+
         };
 
-        reader.onerror=reject;
+
+        reader.onerror = reject;
+
 
         reader.readAsDataURL(file);
 
+
     });
 
+
 }
+
+
 
 export function getImage(){
 
@@ -38,32 +56,93 @@ export function getImage(){
 
 }
 
-export function cropTexture(rect, face = "front") {
 
-    if (!sourceImage) return null;
 
-    const sizes = {
 
-        front:  { w: 1024, h: 1024 },
-        back:   { w: 1024, h: 1024 },
-        left:   { w: 1024, h: 1024 },
-        right:  { w: 1024, h: 1024 },
-        top:    { w: 1024, h: 1024 },
-        bottom: { w: 1024, h: 1024 }
+export function cropTexture(
+    rect,
+    face,
+    boxSize
+){
 
-    };
 
-    const size = sizes[face];
+    if(!sourceImage)
+        return null;
 
-    const canvas = document.createElement("canvas");
 
-    canvas.width = size.w;
-    canvas.height = size.h;
 
-    const ctx = canvas.getContext("2d");
+    const scale = 4;
+
+
+
+    let w;
+    let h;
+
+
+
+    switch(face){
+
+
+        case "front":
+        case "back":
+
+            w = boxSize.width;
+
+            h = boxSize.height;
+
+            break;
+
+
+
+        case "left":
+        case "right":
+
+            w = boxSize.depth;
+
+            h = boxSize.height;
+
+            break;
+
+
+
+        case "top":
+        case "bottom":
+
+            w = boxSize.width;
+
+            h = boxSize.depth;
+
+            break;
+
+
+    }
+
+
+
+    const canvas =
+        document.createElement("canvas");
+
+
+
+    canvas.width =
+        w * scale;
+
+
+    canvas.height =
+        h * scale;
+
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
 
     ctx.imageSmoothingEnabled = true;
+
     ctx.imageSmoothingQuality = "high";
+
+
 
     ctx.drawImage(
 
@@ -76,17 +155,29 @@ export function cropTexture(rect, face = "front") {
 
         0,
         0,
-        size.w,
-        size.h
+
+        canvas.width,
+        canvas.height
 
     );
 
-    const texture = new THREE.CanvasTexture(canvas);
 
-    texture.colorSpace = THREE.SRGBColorSpace;
+
+    const texture =
+        new THREE.CanvasTexture(canvas);
+
+
+
+    texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+
 
     texture.needsUpdate = true;
 
+
+
     return texture;
+
 
 }
