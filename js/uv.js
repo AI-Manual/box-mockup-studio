@@ -41,9 +41,41 @@ export function clearTextures() {
 
 }
 
-function createMaterial(texture) {
+function createMaterial(texture, face) {
 
     if (texture) {
+
+        texture.center.set(0.5, 0.5);
+
+        texture.flipY = false;
+
+        switch (face) {
+
+            case "front":
+                texture.rotation = 0;
+                break;
+
+            case "back":
+                texture.rotation = Math.PI;
+                break;
+
+            case "left":
+                texture.rotation = Math.PI / 2;
+                break;
+
+            case "right":
+                texture.rotation = -Math.PI / 2;
+                break;
+
+            case "top":
+                texture.rotation = 0;
+                break;
+
+            case "bottom":
+                texture.rotation = Math.PI;
+                break;
+
+        }
 
         texture.needsUpdate = true;
 
@@ -66,7 +98,6 @@ function createMaterial(texture) {
     });
 
 }
-
 function updateBoxTexture() {
 
     const box = getBox();
