@@ -22,3 +22,19 @@ window.addEventListener("DOMContentLoaded",()=>{
         });
 
 });
+
+import { loadTexture } from "./js/texture.js";
+
+document
+.getElementById("imageInput")
+.addEventListener("change",async(e)=>{
+
+    const file=e.target.files[0];
+
+    if(!file) return;
+
+    await loadTexture(file);
+
+    alert("画像を読み込みました");
+
+});
