@@ -5,10 +5,7 @@ let boxMesh = null;
 
 
 
-// 面Texture保存
-
 const faceTextures = {
-
 
     right:null,
     left:null,
@@ -23,30 +20,13 @@ const faceTextures = {
 
 
 
-
-// =======================================
-// 面Texture設定
-// =======================================
-
 export function setFaceTexture(
     face,
     texture
 ){
 
-    if(!faceTextures[face])
-    {
-
-        faceTextures[face] =
-            texture;
-
-    }
-    else
-    {
-
-        faceTextures[face] =
-            texture;
-
-    }
+    faceTextures[face] =
+        texture;
 
 
 }
@@ -57,10 +37,6 @@ export function setFaceTexture(
 
 
 
-// =======================================
-// BOX生成
-// =======================================
-
 export function createBox(
     scene,
     width,
@@ -69,17 +45,11 @@ export function createBox(
 ){
 
 
-
     if(boxMesh){
 
-
-        scene.remove(
-            boxMesh
-        );
-
+        scene.remove(boxMesh);
 
         boxMesh.geometry.dispose();
-
 
         if(Array.isArray(boxMesh.material)){
 
@@ -89,9 +59,7 @@ export function createBox(
 
         }
 
-
     }
-
 
 
 
@@ -99,14 +67,10 @@ export function createBox(
 
     const geometry =
         new THREE.BoxGeometry(
-
-            Number(width),
-            Number(height),
-            Number(depth)
-
+            width,
+            height,
+            depth
         );
-
-
 
 
 
@@ -116,32 +80,38 @@ export function createBox(
 
 
         createMaterial(
-            faceTextures.right
+            faceTextures.right,
+            "right"
         ),
 
 
         createMaterial(
-            faceTextures.left
+            faceTextures.left,
+            "left"
         ),
 
 
         createMaterial(
-            faceTextures.top
+            faceTextures.top,
+            "top"
         ),
 
 
         createMaterial(
-            faceTextures.bottom
+            faceTextures.bottom,
+            "bottom"
         ),
 
 
         createMaterial(
-            faceTextures.front
+            faceTextures.front,
+            "front"
         ),
 
 
         createMaterial(
-            faceTextures.back
+            faceTextures.back,
+            "back"
         )
 
 
@@ -155,39 +125,24 @@ export function createBox(
 
     boxMesh =
         new THREE.Mesh(
-
             geometry,
-
             materials
-
         );
 
 
 
-
-
     boxMesh.position.y =
-        Number(height)/2;
+        height / 2;
 
 
 
+    boxMesh.castShadow = true;
 
-
-    boxMesh.castShadow =
-        true;
-
-
-    boxMesh.receiveShadow =
-        true;
+    boxMesh.receiveShadow = true;
 
 
 
-
-
-    scene.add(
-        boxMesh
-    );
-
+    scene.add(boxMesh);
 
 
     return boxMesh;
@@ -201,31 +156,116 @@ export function createBox(
 
 
 
-function createMaterial(texture){
+function createMaterial(
+    texture,
+    face
+){
+
+
+    if(!texture){
+
+
+        return new THREE.MeshStandardMaterial({
+
+            color:0xffffff,
+
+            roughness:0.95
+
+        });
+
+
+    }
+
+
+
+
+    // Textureを複製
+    const tex =
+        texture.clone();
+
+
+
+    tex.needsUpdate = true;
+
+
+
+
+    switch(face){
+
+
+        case "front":
+
+            break;
+
+
+
+        case "back":
+
+            tex.repeat.x = -1;
+
+            tex.offset.x = 1;
+
+            break;
+
+
+
+        case "left":
+
+            tex.repeat.x = -1;
+
+            tex.offset.x = 1;
+
+            break;
+
+
+
+        case "right":
+
+            break;
+
+
+
+        case "top":
+
+            tex.rotation =
+                Math.PI / 2;
+
+            tex.center.set(
+                0.5,
+                0.5
+            );
+
+            break;
+
+
+
+        case "bottom":
+
+            tex.rotation =
+                -Math.PI / 2;
+
+            tex.center.set(
+                0.5,
+                0.5
+            );
+
+            break;
+
+
+    }
+
+
 
 
     return new THREE.MeshStandardMaterial({
 
-        map:texture,
+        map:tex,
 
         color:0xffffff,
 
-        roughness:0.95,
-
-        metalness:0
+        roughness:0.95
 
     });
 
-
-}
-
-
-
-
-
-
-export function getBox(){
-
-    return boxMesh;
 
 }
