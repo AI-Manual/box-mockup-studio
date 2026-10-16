@@ -1,9 +1,10 @@
-import * as THREE from "three";
+// =======================================
+// 展開図UV設定
+// BoxGeometry用
+// =======================================
 
 
 // 展開図配置
-//
-// 画像全体をUV 0〜1で管理
 //
 //        TOP
 //
@@ -11,72 +12,74 @@ import * as THREE from "three";
 //
 //       BOTTOM
 //
+// UV座標 0.0〜1.0
+//
 
 const faceAreas = {
 
 
-    front:{
+    front: {
 
-        u1:0.25,
-        v1:0.33,
+        u1: 0.25,
+        v1: 0.33,
 
-        u2:0.50,
-        v2:0.66
-
-    },
-
-
-    back:{
-
-        u1:0.75,
-        v1:0.33,
-
-        u2:1.00,
-        v2:0.66
+        u2: 0.50,
+        v2: 0.66
 
     },
 
 
-    left:{
+    back: {
 
-        u1:0.00,
-        v1:0.33,
+        u1: 0.75,
+        v1: 0.33,
 
-        u2:0.25,
-        v2:0.66
-
-    },
-
-
-    right:{
-
-        u1:0.50,
-        v1:0.33,
-
-        u2:0.75,
-        v2:0.66
+        u2: 1.00,
+        v2: 0.66
 
     },
 
 
-    top:{
+    left: {
 
-        u1:0.25,
-        v1:0.00,
+        u1: 0.00,
+        v1: 0.33,
 
-        u2:0.50,
-        v2:0.33
+        u2: 0.25,
+        v2: 0.66
 
     },
 
 
-    bottom:{
+    right: {
 
-        u1:0.25,
-        v1:0.66,
+        u1: 0.50,
+        v1: 0.33,
 
-        u2:0.50,
-        v2:1.00
+        u2: 0.75,
+        v2: 0.66
+
+    },
+
+
+    top: {
+
+        u1: 0.25,
+        v1: 0.00,
+
+        u2: 0.50,
+        v2: 0.33
+
+    },
+
+
+    bottom: {
+
+        u1: 0.25,
+        v1: 0.66,
+
+        u2: 0.50,
+        v2: 1.00
 
     }
 
@@ -86,6 +89,9 @@ const faceAreas = {
 
 
 
+// =======================================
+// BoxGeometry UV適用
+// =======================================
 
 export function applyBoxUV(
     geometry,
@@ -95,12 +101,14 @@ export function applyBoxUV(
 ){
 
 
-    const uv = geometry.attributes.uv;
+    const uv =
+        geometry.attributes.uv;
+
 
 
     /*
     
-    BoxGeometryの面順
+    THREE.BoxGeometry 面順
 
     0 right
     1 left
@@ -109,10 +117,13 @@ export function applyBoxUV(
     4 front
     5 back
 
+
+    各面6頂点
+
     */
 
 
-    const mappings=[
+    const mappings = [
 
 
         faceAreas.right,
@@ -127,6 +138,7 @@ export function applyBoxUV(
 
         faceAreas.back
 
+
     ];
 
 
@@ -135,80 +147,67 @@ export function applyBoxUV(
 
 
 
-    for(
-        let i = 0;
-        i < mappings.length;
-        i++
-    ){
-
-
-        const area = mappings[i];
-
-
-        const a = offset;
-
-        const b = offset + 1;
-
-        const c = offset + 2;
-
-        const d = offset + 3;
+    mappings.forEach(area => {
 
 
 
-        if(
-            c >= uv.count
-        ){
-            break;
-        }
-
-
-
+        // -----------------------
         // 三角形1
+        // -----------------------
+
         uv.setXY(
-            a,
+            offset,
             area.u1,
             area.v1
         );
 
+
         uv.setXY(
-            b,
+            offset + 1,
             area.u2,
             area.v1
         );
 
+
         uv.setXY(
-            c,
+            offset + 2,
             area.u2,
             area.v2
         );
 
 
+
+        // -----------------------
         // 三角形2
+        // -----------------------
 
         uv.setXY(
-            a + 3,
+            offset + 3,
             area.u1,
             area.v1
         );
 
+
         uv.setXY(
-            c,
+            offset + 4,
             area.u2,
             area.v2
         );
 
+
         uv.setXY(
-            d,
+            offset + 5,
             area.u1,
             area.v2
         );
 
 
 
-        offset += 4;
+        offset += 6;
 
 
-    }
+    });
+
 
 
     uv.needsUpdate = true;
