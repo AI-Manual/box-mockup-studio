@@ -75,3 +75,130 @@ export function initScene(){
     animate();
 
 }
+
+function createLights(){
+
+    const light1 = new THREE.DirectionalLight(
+
+        0xffffff,
+
+        2
+
+    );
+
+    light1.position.set(
+
+        500,
+
+        500,
+
+        500
+
+    );
+
+    scene.add(light1);
+
+    const light2 = new THREE.AmbientLight(
+
+        0xffffff,
+
+        1.2
+
+    );
+
+    scene.add(light2);
+
+}
+
+function createGrid(){
+
+    const grid = new THREE.GridHelper(
+
+        2000,
+
+        40,
+
+        0x999999,
+
+        0xcccccc
+
+    );
+
+    scene.add(grid);
+
+}
+
+function createBox(){
+
+    const geometry = new THREE.BoxGeometry(
+
+        250,
+
+        180,
+
+        120
+
+    );
+
+    const material = new THREE.MeshStandardMaterial({
+
+        color:0xffffff
+
+    });
+
+    const mesh = new THREE.Mesh(
+
+        geometry,
+
+        material
+
+    );
+
+    mesh.position.y = 90;
+
+    scene.add(mesh);
+
+}
+
+function resize(){
+
+    const viewer = document.getElementById("viewer");
+
+    camera.aspect =
+
+        viewer.clientWidth /
+
+        viewer.clientHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+
+        viewer.clientWidth,
+
+        viewer.clientHeight
+
+    );
+
+}
+
+function animate(){
+
+    requestAnimationFrame(
+
+        animate
+
+    );
+
+    controls.update();
+
+    renderer.render(
+
+        scene,
+
+        camera
+
+    );
+
+}
+
