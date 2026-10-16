@@ -1,10 +1,13 @@
 import * as THREE from "three";
+import { applyBoxUV } from "./uv.js";
 
 let boxMesh = null;
 
-export function createBox(scene, width, height, depth) {
 
-    // 古い箱を削除
+export function createBox(scene, width, height, depth, texture = null) {
+
+
+    // 古い箱削除
     if (boxMesh) {
 
         scene.remove(boxMesh);
@@ -25,9 +28,11 @@ export function createBox(scene, width, height, depth) {
 
     }
 
+
     const w = Number(width);
     const h = Number(height);
     const d = Number(depth);
+
 
     const geometry = new THREE.BoxGeometry(
         w,
@@ -35,31 +40,54 @@ export function createBox(scene, width, height, depth) {
         d
     );
 
+
+    // 展開図UV設定
+    applyBoxUV(
+        geometry,
+        w,
+        h,
+        d
+    );
+
+
     const material = new THREE.MeshStandardMaterial({
 
-        color: 0xffffff,
+        map: texture,
+
+        color: texture ? 0xffffff : 0xffffff,
+
         roughness: 0.95,
+
         metalness: 0
 
     });
+
 
     boxMesh = new THREE.Mesh(
         geometry,
         material
     );
 
+
+    // 床に置く
     boxMesh.position.y = h / 2;
 
+
     boxMesh.castShadow = true;
+
     boxMesh.receiveShadow = true;
 
+
     scene.add(boxMesh);
+
 
     return boxMesh;
 
 }
 
-export function getBox() {
+
+
+export function getBox(){
 
     return boxMesh;
 
