@@ -222,17 +222,7 @@ export function cropTexture(
         THREE.RepeatWrapping;
 
 
-    texture.repeat.x =
-        -1;
-
-
-    texture.offset.x =
-        1;
-
-
-
-
-
+    
 
     texture.needsUpdate =
         true;
